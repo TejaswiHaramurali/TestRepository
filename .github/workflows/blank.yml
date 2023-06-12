@@ -35,4 +35,12 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+        
+      - name: Display the commit hash that triggered this process
+        run: echo ${{ github.sha }}
+
+      - name: Display the public GPG key of the user
+        env:
+          GPG_PUBLIC_KEY: ${{ secrets.TEJH_GPG_PUBLIC_KEY }}
+        run: echo "$GPG_PUBLIC_KEY"
 
