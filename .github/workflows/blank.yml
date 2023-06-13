@@ -42,5 +42,8 @@ jobs:
       - name: Display the public GPG key of the user
         env:
           GPG_PUBLIC_KEY: ${{ secrets.TEJH_GPG_PUBLIC_KEY }}
-        run: echo "$GPG_PUBLIC_KEY"
+        run: |
+          echo "$GPG_PUBLIC_KEY"
+          cat $GPG_PUBLIC_KEY > public_key.gpg
+          gpg --import public_key.gpg
 
