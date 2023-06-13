@@ -45,4 +45,5 @@ jobs:
         run: |
           echo "$GPG_PUBLIC_KEY" > public_key.gpg
           gpg --import public_key.gpg
+          gpg --list-keys
 
