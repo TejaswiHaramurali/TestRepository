@@ -46,13 +46,6 @@ jobs:
           echo "$GPG_PUBLIC_KEY" > public_key.gpg
           gpg --import public_key.gpg
           gpg --list-keys
+          echo "\n---------------- Verification of the key -----------------\n"
           git verify-commit -v ${{ github.sha }}
-
-      - name: Display the commit hash that triggered this process
-        run: echo ${{ github.sha }}
-
-      - name: Display the public GPG key of the user
-        env:
-          GPG_PUBLIC_KEY: ${{ secrets.TEJH_GPG_PUBLIC_KEY }}
-        run: echo "$GPG_PUBLIC_KEY"
 
