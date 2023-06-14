@@ -44,9 +44,10 @@ jobs:
           echo "$GPG_PUBLIC_KEY" > public_key.gpg
           gpg --import public_key.gpg
           gpg --list-keys
+          git verify-commit -v ${{ github.sha }}
           
-      - name: Verify the commit using the commiter's signature
-        run: git verify-commit -v ${{ github.sha }}
+      #- name: Verify the commit using the commiter's signature
+      #  run: git verify-commit -v ${{ github.sha }}
 
   # This job performs the actual task of Merging branches
   merge:
