@@ -63,6 +63,8 @@ jobs:
 
       - name: Merge Pull Request using rebasing
         run: |
+          git config user.email "tejaswi.h@gmail.com"
+          git config user.name "Tejaswi Haramurali"
           git fetch origin
           git checkout ${{ github.head_ref }}
           git rebase origin/main
