@@ -62,8 +62,17 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Merge Pull Request using rebasing
-        uses: pullreminders/merge-action@v4
-        with:
-          merge_method: rebase
-          delete_branch: false
-          strict: true
+        run: |
+          git fetch origin
+          git checkout ${{ github.head_ref }}
+          git rebase main
+          git checkout main
+          git merge --ff-only ${{ github.head_ref }}
+          git push origin main
+      
+          #uses: pullreminders/merge-action@v4
+          #with:
+          #merge_method: rebase
+          #delete_branch: false
+          #strict: true
+      
