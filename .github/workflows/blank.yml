@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install vim
           
       - name: Display the commit hash & branch that triggered this process
-        run: echo "Triggering workflow for branch ${{ github.ref }} and commit-hash ${{ github.sha }}"
+        run: echo "Triggering workflow for branch ${{ github.ref }} and commit-hash ${{ github.event.pull_request.head.sha }}"
 
       - name: Import the GPG public key of the committer
         env:
@@ -46,7 +46,7 @@ jobs:
           gpg --list-keys
           
       - name: Verify the commit using the commiter's signature
-        run: git verify-commit -v ${{ github.sha }}
+        run: git verify-commit -v ${{ github.event.pull_request.head.sha }}
 
   # This job performs the actual task of Merging branches
   merge:
