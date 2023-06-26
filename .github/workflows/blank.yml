@@ -27,6 +27,10 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Install Git
         run: |
+          apt-get update
+          apt-get install software-properties-common
+          add-apt-repository ppa:git-core/ppa
+          apt-get update
           apt-get install git
           
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
