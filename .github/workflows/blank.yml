@@ -47,6 +47,11 @@ jobs:
           gpg --import public_key.gpg
           gpg --list-keys
           
+      - name: Show the current directory and .git folder
+        run: |
+          ls -ltr 
+          ls .git
+          
       - name: Verify the commit using the commiter's signature
         run: git verify-commit -v ${{ github.event.pull_request.head.sha }}
 
