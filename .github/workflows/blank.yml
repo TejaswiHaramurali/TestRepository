@@ -32,9 +32,9 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Install required dependencies
         run: |
-          sudo apt-get install gnupg
-          sudo apt-get install curl
-          sudo apt-get install vim
+          apt-get install gnupg
+          apt-get install curl
+          apt-get install vim
           
       - name: Display the commit hash & branch that triggered this process
         run: echo "Triggering workflow for branch ${{ github.ref }} and commit-hash ${{ github.event.pull_request.head.sha }}"
