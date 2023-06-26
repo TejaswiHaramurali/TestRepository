@@ -63,7 +63,15 @@ jobs:
           ls .git
           
       - name: Verify the commit using the commiter's signature
-        run: git verify-commit -v ${{ github.event.pull_request.head.sha }}
+        run: |
+          git verify-commit -v ${{ github.event.pull_request.head.sha }}
+          if [[ $? -eq 0 ]]; then
+            echo "Command executed successfully or with empty exit code"
+            exit 0 
+          else
+            echo "Command failed with exit code: $?"
+            exit 1
+          fi
 
   # This job performs the actual task of Merging branches
   merge:
