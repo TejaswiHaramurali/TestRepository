@@ -49,7 +49,8 @@ jobs:
         run: echo "Triggering workflow for branch ${{ github.ref }} and commit-hash ${{ github.event.pull_request.head.sha }}"
 
       - name: Display the email-ID of the user
-        run: echo "Email ID of the user who initiated commit : ${{ github.event.commits[0].author.email }}"
+        run: echo "${{ toJson(github.event) }}"
+        run: echo "Email ID of the user who initiated commit ${{ github.event.commits[0].author.email }}"
 
       - name: Import the GPG public key of the committer
         env:
