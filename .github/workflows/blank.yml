@@ -36,7 +36,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
           ref: ${{ github.head_ref }}
 
       # Runs a set of commands using the runners shell
@@ -49,18 +48,17 @@ jobs:
       - name: Display the commit hash & branch that triggered this process
         run: echo "Triggering workflow for branch ${{ github.ref }} and commit-hash ${{ github.event.pull_request.head.sha }}"
 
+      - name: Display the email-ID of the user
+        run: echo "Email ID of the user who initiated commit : ${{ github.event.commits[0].author.email }}"
+
       - name: Import the GPG public key of the committer
         env:
           GPG_PUBLIC_KEY: ${{ secrets.TEJH_GPG_PUBLIC_KEY }}
+          GPG_USER_ID: ${{ github.event.commits[0].author.email }}
         run: |
           echo "$GPG_PUBLIC_KEY" > public_key.gpg
           gpg --import public_key.gpg
           gpg --list-keys
-          
-      - name: Show the current directory and .git folder
-        run: |
-          ls -ltr 
-          ls .git
           
       - name: Verify the commit using the commiter's signature
         run: git verify-commit -v ${{ github.event.pull_request.head.sha }}
