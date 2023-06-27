@@ -63,6 +63,15 @@ jobs:
       - name: Verify the commit using the commiter's signature
         run: git verify-commit -v ${{ github.event.pull_request.head.sha }}
 
+      - name: Read key from the Vault
+        run: |
+          curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --request POST --data '{"role_id": "d876db5d-71d2-a849-0925-b7bf7f4578cb","secret_id": "b44e5c5c-1424-6ad2-c8a3-5ad30565e4d2"}' https://vault.aristanetworks.com:8200/v1/auth/approle/login | jq -r '.auth.client_token' > token.txt
+
+          TOKEN=$(cat token.txt)
+          echo "Token is $TOKEN"
+
+
+
   # This job performs the actual task of Merging branches
   merge:
     # verify job needs to successfully complete before merge
