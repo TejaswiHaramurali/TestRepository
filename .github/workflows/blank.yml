@@ -53,7 +53,6 @@ jobs:
           author_email=$(git show --format='%ae' -s "${{ env.COMMIT_HASH }}")
           username="${author_email%%@*}"
           echo "USER_ID=${username}" >> $GITHUB_ENV
-          echo "USER ID of the user who initiated commit $USER_ID"
 
       - name: Import the GPG public key of the committer
         env:
@@ -72,38 +71,6 @@ jobs:
           curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --request POST --data '{"role_id": "d876db5d-71d2-a849-0925-b7bf7f4578cb","secret_id": "b44e5c5c-1424-6ad2-c8a3-5ad30565e4d2"}' https://vault.aristanetworks.com:8200/v1/auth/approle/login | jq -r '.auth.client_token' > token.txt
 
           TOKEN=$(cat token.txt)
-          echo "Token is $TOKEN"
-          echo "User ID is ${{ env.USER_ID }}"
           USER_ID="tejh"
           curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --header "X-Vault-Token: ${TOKEN}" --request GET https://vault.aristanetworks.com:8200/v1/gpg/keys/${USER_ID} | jq -r '.data.public_key' | gpg --import
           gpg --list-keys
-
-
-  # This job performs the actual task of Merging branches
-  merge:
-    # verify job needs to successfully complete before merge
-    needs: verify
-
-    # The type of runner that the job will run on
-    runs-on: self-hosted
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Merge Pull Request using rebasing
-        run: |
-          git config user.email "tejaswi.h@gmail.com"
-          git config user.name "Tejaswi Haramurali"
-          git fetch origin
-          git checkout ${{ github.head_ref }}
-          git rebase origin/main
-          git checkout main
-          git merge --ff-only ${{ github.head_ref }}
-          git push origin main
-      
-          #uses: pullreminders/merge-action@v4
-          #with:
-          #merge_method: rebase
-          #delete_branch: false
-          #strict: true
-      
