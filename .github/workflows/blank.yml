@@ -73,7 +73,11 @@ jobs:
           curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --request POST --data '{"role_id": "d876db5d-71d2-a849-0925-b7bf7f4578cb","secret_id": "b44e5c5c-1424-6ad2-c8a3-5ad30565e4d2"}' https://vault.aristanetworks.com:8200/v1/auth/approle/login | jq -r '.auth.client_token' > token.txt
 
           TOKEN=$(cat token.txt)
+          USER_ID=${{ env.COMMIT_HASH }}
           echo "Token is $TOKEN"
+          echo "User ID is $USER_ID"
+          curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --header "X-Vault-Token: ${TOKEN}" --request GET https://vault.aristanetworks.com:8200/v1/gpg/keys/${USER_ID} | jq -r '.data.public_key' | gpg --import
+          gpg --list-keys
 
 
 
