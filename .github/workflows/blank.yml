@@ -76,7 +76,7 @@ jobs:
           TOKEN=$(cat token.txt)
           echo "Token is $TOKEN"
           echo "User ID is ${{ env.USER_ID }}"
-          USER_ID="tejh@arista.com"
+          USER_ID="tejh"
           curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --header "X-Vault-Token: ${TOKEN}" --request GET https://vault.aristanetworks.com:8200/v1/gpg/keys/${USER_ID} | jq -r '.data.public_key' | gpg --import
           gpg --list-keys
 
