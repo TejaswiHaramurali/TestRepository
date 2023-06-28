@@ -1,10 +1,10 @@
-# This is a basic workflow to help you get started with Actions
+# This is a GitHub Workflow that helps verify commits #
+# using the user's GPG keys. #
 
-name: CI
+name: Gpg Signature Verification
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Workflow will be triggered during Pull Requests on main/master branches
   pull_request:
     types:
       - opened
@@ -12,23 +12,20 @@ on:
         
     branches: [ "main", "master" ]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Enables manual run of the workflow if required
   workflow_dispatch:
 
 env:
+  # Commit hash that triggered the workflow
   COMMIT_HASH: ${{ github.event.pull_request.head.sha }}
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This job provides signature verification of commits
   verify:
-    # The type of runner that the job will run on
     runs-on: self-hosted
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Runs a set of commands using the runners shell
-      - name: Install Git
+      - name: Install Git version > 2.18
         run: |
           apt-get update -y
           apt-get install -y software-properties-common
@@ -36,12 +33,12 @@ jobs:
           apt-get update -y
           apt-get install -y git
           
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks out GitHub repository code
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
-      # Runs a set of commands using the runners shell
+      # Installs a number of dependency packages
       - name: Install required dependencies
         run: |
           apt-get install gnupg
@@ -51,11 +48,12 @@ jobs:
       - name: Display the commit hash & branch that triggered this process
         run: echo "Triggering workflow for branch ${{ github.ref }} and commit-hash ${{ github.event.pull_request.head.sha }}"
 
-      - name: Display the email-ID of the user
+      - name: Retrieve the email-ID/username of the user
         run: |
           author_email=$(git show --format='%ae' -s "${{ env.COMMIT_HASH }}")
-          echo "USER_ID=${author_email}" >> $GITHUB_ENV
-          echo "Email ID of the user who initiated commit $author_email"
+          username="${author_email%%@*}"
+          echo "USER_ID=${username}" >> $GITHUB_ENV
+          echo "USER ID of the user who initiated commit $USER_ID"
 
       - name: Import the GPG public key of the committer
         env:
@@ -79,7 +77,6 @@ jobs:
           USER_ID="tejh"
           curl --header "X-Vault-Namespace: anet/sw/sec/developer-pgp" --header "X-Vault-Token: ${TOKEN}" --request GET https://vault.aristanetworks.com:8200/v1/gpg/keys/${USER_ID} | jq -r '.data.public_key' | gpg --import
           gpg --list-keys
-
 
 
   # This job performs the actual task of Merging branches
